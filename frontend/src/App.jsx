@@ -6,6 +6,11 @@ import axios from 'axios';
 import useAuthStore from './store/authStore';
 import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
+import ProductList from './pages/ProductList';
+import CartPage from './pages/Cart';
+import MyOrdersPage from './pages/MyOrder';
+import OrderManagementPage from './pages/OrderMangement';
+import ProductManagementPage from './pages/ProductMangement';
 
 function App() {
   const { login, logout } = useAuthStore();
@@ -40,6 +45,11 @@ function App() {
         <Header />
         <main className="flex-grow container mx-auto px-4 py-6">
           <Routes>
+            <Route path="/" element={<ProductList />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/my-orders" element={<MyOrdersPage />} />
+            <Route path="/admin/orders" element={<OrderManagementPage />} />
+            <Route path="/admin/products" element={<ProductManagementPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Routes>
