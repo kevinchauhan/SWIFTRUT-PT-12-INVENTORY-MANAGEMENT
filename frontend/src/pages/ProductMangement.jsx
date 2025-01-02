@@ -3,49 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const ProductManagementPage = () => {
-    const [products, setProducts] = useState([
-        {
-            "id": 1,
-            "name": "Wireless Bluetooth Headphones",
-            "price": 59.99,
-            "description": "High-quality wireless Bluetooth headphones with noise-cancelling feature.",
-            "imageUrl": "https://example.com/images/headphones.jpg",
-            "stock": 50
-        },
-        {
-            "id": 2,
-            "name": "Smartphone 5G",
-            "price": 799.99,
-            "description": "Latest 5G smartphone with 128GB storage and powerful camera features.",
-            "imageUrl": "https://example.com/images/smartphone.jpg",
-            "stock": 30
-        },
-        {
-            "id": 3,
-            "name": "Smartwatch Series 6",
-            "price": 249.99,
-            "description": "A sleek and stylish smartwatch with fitness tracking, heart rate monitoring, and more.",
-            "imageUrl": "https://example.com/images/smartwatch.jpg",
-            "stock": 20
-        },
-        {
-            "id": 4,
-            "name": "4K Ultra HD Television",
-            "price": 1299.99,
-            "description": "65-inch 4K UHD television with smart features and voice control.",
-            "imageUrl": "https://example.com/images/television.jpg",
-            "stock": 10
-        },
-        {
-            "id": 5,
-            "name": "Wireless Earbuds",
-            "price": 39.99,
-            "description": "Compact and lightweight wireless earbuds with great sound quality.",
-            "imageUrl": "https://example.com/images/earbuds.jpg",
-            "stock": 100
-        }
-    ]
-    );
+    const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [productToEdit, setProductToEdit] = useState(null);
@@ -74,7 +32,7 @@ const ProductManagementPage = () => {
     const fetchProducts = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/api/products`);
-            // setProducts(response.data);
+            setProducts(response.data);
         } catch (error) {
             console.error("Error fetching products:", error);
         } finally {
