@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import useAuthStore from "../store/authStore";
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { user } = useAuthStore()
 
     const fetchProducts = async () => {
         try {
@@ -70,7 +72,7 @@ const ProductList = () => {
                             <p className={`text-sm ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
                                 {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
                             </p>
-                            <div className="card-actions justify-end">
+                            {user?.role === 'user' && <div className="card-actions justify-end">
                                 <button
                                     className="btn btn-primary"
                                     onClick={() => addToCart(product.id)}
@@ -78,7 +80,7 @@ const ProductList = () => {
                                 >
                                     {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
                                 </button>
-                            </div>
+                            </div>}
                         </div>
                     </div>
                 ))}

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import useAuthStore from "../store/authStore";
+import { useNavigate } from "react-router-dom";
 
 const ProductManagementPage = () => {
     const [products, setProducts] = useState([]);
@@ -14,6 +16,16 @@ const ProductManagementPage = () => {
         imageUrl: "",
         stock: "",
     });
+
+    const { user } = useAuthStore();
+    const navigate = useNavigate();
+
+    // Redirect to homepage if the user is not an admin
+    useEffect(() => {
+        if (user?.role !== "admin") {
+            navigate("/"); // Redirect if not admin
+        }
+    }, [user, navigate]);
 
     // Reset form data when productToEdit is null (i.e., when adding a new product)
     useEffect(() => {
