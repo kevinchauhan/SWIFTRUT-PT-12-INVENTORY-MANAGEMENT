@@ -66,15 +66,16 @@ const ProductManagementPage = () => {
     const editProduct = async () => {
         try {
             const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_API_URL}/api/products/${productToEdit.id}`,
+                `${import.meta.env.VITE_BACKEND_API_URL}/api/products/${productToEdit._id}`,
                 formData
             );
             setProducts((prevProducts) =>
                 prevProducts.map((product) =>
-                    product.id === productToEdit.id ? response.data : product
+                    product.id === productToEdit._id ? response.data : product
                 )
             );
             toast.success("Product updated successfully!");
+            fetchProducts()
             setShowModal(false);
             setProductToEdit(null);
         } catch (error) {
@@ -91,6 +92,7 @@ const ProductManagementPage = () => {
                 prevProducts.filter((product) => product.id !== productId)
             );
             toast.success("Product deleted successfully!");
+            fetchProducts()
         } catch (error) {
             console.error("Error deleting product:", error);
             toast.error("Error deleting product!");
@@ -159,7 +161,7 @@ const ProductManagementPage = () => {
                                                 Edit
                                             </button>
                                             <button
-                                                onClick={() => deleteProduct(product.id)}
+                                                onClick={() => deleteProduct(product._id)}
                                                 className="btn btn-error btn-xs text-white"
                                             >
                                                 Delete
