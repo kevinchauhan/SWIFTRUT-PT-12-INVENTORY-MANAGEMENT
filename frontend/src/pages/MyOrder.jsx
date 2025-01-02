@@ -3,28 +3,7 @@ import axios from "axios";
 import useAuthStore from "../store/authStore"; // Assuming you use Zustand for global state management
 
 const MyOrdersPage = () => {
-    const [orders, setOrders] = useState([
-        {
-            "id": "12345",
-            "date": "2024-12-20T15:30:00Z",
-            "totalAmount": 59.98,
-            "status": "Completed",
-            "items": [
-                { "name": "Product 1", "quantity": 2, "price": 25.99 },
-                { "name": "Product 2", "quantity": 1, "price": 12.49 }
-            ]
-        },
-        {
-            "id": "67890",
-            "date": "2024-12-22T10:00:00Z",
-            "totalAmount": 40.00,
-            "status": "Pending",
-            "items": [
-                { "name": "Product 3", "quantity": 1, "price": 40.00 }
-            ]
-        }
-    ]
-    );
+    const [orders, setOrders] = useState();
     const [loading, setLoading] = useState(true);
     const { isAuthenticated } = useAuthStore();
 
@@ -32,7 +11,7 @@ const MyOrdersPage = () => {
     const fetchOrders = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/api/orders`);
-            // setOrders(response.data); 
+            setOrders(response.data);
         } catch (error) {
             console.error("Error fetching orders:", error);
         } finally {
@@ -42,6 +21,7 @@ const MyOrdersPage = () => {
 
     // Format date for display
     const formatDate = (date) => {
+        console.log(date)
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(date).toLocaleDateString(undefined, options);
     };
@@ -78,18 +58,21 @@ const MyOrdersPage = () => {
                         </thead>
                         <tbody>
                             {orders?.map((order) => (
-                                <tr key={order.id} className="border-b">
-                                    <td className="py-4">{order.id}</td>
-                                    <td>{formatDate(order.date)}</td>
+                                <tr key={order._id} className="border-b">
+                                    <td className="py-4">{order._id}</td>
+                                    <td>{formatDate(order.createdAt)}</td>
                                     <td>${order.totalAmount.toFixed(2)}</td>
                                     <td>
                                         <span
-                                            className={`${order.status === "Completed" ? "text-green-600" : "text-yellow-600"
-                                                }`}
+                                            className={`text-sm font-medium 
+            ${order.status === "Completed" ? "text-green-600" :
+                                                    order.status === "Pending" ? "text-yellow-600" :
+                                                        order.status === "Processing" ? "text-blue-600" : "text-red-600"}`}
                                         >
                                             {order.status}
                                         </span>
                                     </td>
+
                                     {/* <td>
                                         <button
                                             onClick={() => alert(`View details for order ID: ${order.id}`)}

@@ -11,6 +11,7 @@ import CartPage from './pages/Cart';
 import MyOrdersPage from './pages/MyOrder';
 import OrderManagementPage from './pages/OrderMangement';
 import ProductManagementPage from './pages/ProductMangement';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const { login, logout } = useAuthStore();
@@ -41,15 +42,15 @@ function App() {
   }, [login, logout]);
   return (
     <Router>
-      <div className="flex flex-col min-h-screen bg-violet-50">
+      <div className="flex flex-col min-h-screen bg-gray-50">
         <Header />
         <main className="flex-grow container mx-auto px-4 py-6">
           <Routes>
-            <Route path="/" element={<ProductList />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/my-orders" element={<MyOrdersPage />} />
-            <Route path="/admin/orders" element={<OrderManagementPage />} />
-            <Route path="/admin/products" element={<ProductManagementPage />} />
+            <Route path="/" element={<ProtectedRoute><ProductList /></ProtectedRoute>} />
+            <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+            <Route path="/my-orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>} />
+            <Route path="/admin/orders" element={<ProtectedRoute><OrderManagementPage /></ProtectedRoute>} />
+            <Route path="/admin/products" element={<ProtectedRoute><ProductManagementPage /></ProtectedRoute>} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Routes>

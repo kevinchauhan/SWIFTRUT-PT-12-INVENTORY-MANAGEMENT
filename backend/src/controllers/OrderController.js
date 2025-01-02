@@ -4,8 +4,8 @@ import Product from '../models/Product.js'
 class OrderController {
     // Place an order
     static async placeOrder(req, res) {
-        const { userId, items, totalPrice, status = 'Pending' } = req.body;
-
+        const { items, totalPrice, } = req.body;
+        const userId = req.user.id
         try {
             // Check if the products in the order are available
             for (let item of items) {
@@ -17,10 +17,9 @@ class OrderController {
 
             // Create a new order
             const newOrder = new Order({
-                user: userId,
-                items,
-                totalPrice,
-                status,
+                userId,
+                products: items,
+                totalAmount: totalPrice,
             });
 
             // Reduce stock for each product
@@ -41,7 +40,7 @@ class OrderController {
     // Get all orders
     static async getAllOrders(req, res) {
         try {
-            const orders = await Order.find().populate('user', 'name email').populate('items.productId', 'name price');
+            const orders = await Order.find().populate('userId', 'name email').populate('products.productId', 'name price');
             return res.status(200).json(orders);
         } catch (error) {
             console.error('Error fetching orders:', error);

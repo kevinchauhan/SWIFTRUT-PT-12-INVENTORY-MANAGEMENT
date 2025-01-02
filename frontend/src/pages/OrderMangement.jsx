@@ -1,74 +1,27 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import useAuthStore from "../store/authStore";
+import { useNavigate } from "react-router-dom";
 
 const OrderManagementPage = () => {
-    const [orders, setOrders] = useState([
-        {
-            "id": "12345",
-            "date": "2024-12-20T15:30:00Z",
-            "totalAmount": 59.98,
-            "status": "Completed",
-            "items": [
-                { "name": "Product 1", "quantity": 2, "price": 25.99 },
-                { "name": "Product 2", "quantity": 1, "price": 12.49 }
-            ],
-            "customer": {
-                "name": "John Doe",
-                "email": "johndoe@example.com",
-                "address": "123 Main St, City, Country"
-            }
-        },
-        {
-            "id": "67890",
-            "date": "2024-12-22T10:00:00Z",
-            "totalAmount": 40.00,
-            "status": "Pending",
-            "items": [
-                { "name": "Product 3", "quantity": 1, "price": 40.00 }
-            ],
-            "customer": {
-                "name": "Jane Smith",
-                "email": "janesmith@example.com",
-                "address": "456 Oak St, City, Country"
-            }
-        },
-        {
-            "id": "11223",
-            "date": "2024-12-23T08:15:00Z",
-            "totalAmount": 149.99,
-            "status": "Processing",
-            "items": [
-                { "name": "Product 4", "quantity": 3, "price": 49.99 },
-                { "name": "Product 5", "quantity": 2, "price": 25.00 }
-            ],
-            "customer": {
-                "name": "Michael Brown",
-                "email": "michaelbrown@example.com",
-                "address": "789 Pine St, City, Country"
-            }
-        },
-        {
-            "id": "44556",
-            "date": "2024-12-24T14:00:00Z",
-            "totalAmount": 19.99,
-            "status": "Canceled",
-            "items": [
-                { "name": "Product 6", "quantity": 1, "price": 19.99 }
-            ],
-            "customer": {
-                "name": "Emily White",
-                "email": "emilywhite@example.com",
-                "address": "321 Maple St, City, Country"
-            }
-        }
-    ]);
+    const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const { user } = useAuthStore();
+    const navigate = useNavigate();
+
+    // Redirect to homepage if the user is not an admin
+    useEffect(() => {
+        if (user?.role !== "admin") {
+            navigate("/"); // Redirect if not admin
+        }
+    }, [user, navigate]);
 
     // Fetch all orders from the API
     const fetchOrders = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/api/orders`);
-            // setOrders(response.data);
+            setOrders(response.data);
         } catch (error) {
             console.error("Error fetching orders:", error);
         } finally {
@@ -80,12 +33,12 @@ const OrderManagementPage = () => {
     const updateOrderStatus = async (orderId, newStatus) => {
         try {
             const response = await axios.put(
-                `${import.meta.env.VITE_BACKEND_API_URL}/api/orders/${orderId}`,
+                `${import.meta.env.VITE_BACKEND_API_URL}/api/orders/${orderId}/status`,
                 { status: newStatus }
             );
             setOrders((prevOrders) =>
                 prevOrders.map((order) =>
-                    order.id === orderId ? { ...order, status: newStatus } : order
+                    order._id === orderId ? { ...order, status: newStatus } : order
                 )
             );
         } catch (error) {
@@ -120,15 +73,15 @@ const OrderManagementPage = () => {
                         </thead>
                         <tbody>
                             {orders.map((order) => (
-                                <tr key={order.id} className="border-b">
-                                    <td className="py-4">{order.id}</td>
-                                    <td>{new Date(order.date).toLocaleDateString()}</td>
+                                <tr key={order._id} className="border-b">
+                                    <td className="py-4">{order._id}</td>
+                                    <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                                     <td>${order.totalAmount.toFixed(2)}</td>
                                     <td>
                                         <select
                                             value={order.status}
                                             onChange={(e) =>
-                                                updateOrderStatus(order.id, e.target.value)
+                                                updateOrderStatus(order._id, e.target.value)
                                             }
                                             className={`select select-bordered bg-white w-full max-w-xs 
             ${order.status === "Completed" ? "text-green-600" :

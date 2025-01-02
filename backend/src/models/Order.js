@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const orderSchema = new mongoose.Schema({
-    customerId: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',  // Assuming User schema exists
         required: true,
@@ -17,10 +17,6 @@ const orderSchema = new mongoose.Schema({
             required: true,
             min: 1,
         },
-        price: {
-            type: Number,
-            required: true,
-        },
     }],
     totalAmount: {
         type: Number,
@@ -29,8 +25,8 @@ const orderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'shipped', 'delivered', 'cancelled'],
-        default: 'pending',
+        enum: ['Pending', 'Processing', 'Completed', 'Cancelled'],
+        default: 'Pending',
     },
     orderDate: {
         type: Date,
