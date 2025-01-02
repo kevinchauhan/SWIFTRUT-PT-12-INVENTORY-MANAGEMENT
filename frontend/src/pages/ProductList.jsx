@@ -2,28 +2,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const ProductList = () => {
-    const [products, setProducts] = useState([
-        {
-            "id": "1",
-            "name": "Product Name 1",
-            "price": 19.99,
-            "stock": 10,
-            "image": "https://via.placeholder.com/150"
-        },
-        {
-            "id": "2",
-            "name": "Product Name 2",
-            "price": 29.99,
-            "stock": 0,
-            "image": "https://via.placeholder.com/150"
-        }
-    ]);
+    const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchProducts = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/api/products`);
-            // setProducts(response.data);
+            setProducts(response.data);
         } catch (error) {
             console.error("Error fetching products:", error);
         } finally {
