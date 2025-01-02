@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore"; // Assuming you use Zustand for global state management
+import axios from "axios";
 
 const CartPage = () => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const { isAuthenticated } = useAuthStore();
+    const navigate = useNavigate();
 
     // Fetch cart items from localStorage
     const fetchCartItems = () => {
@@ -34,6 +37,47 @@ const CartPage = () => {
     const getTotalAmount = () => {
         return cartItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
     };
+
+    // Place Order
+    const handlePlaceOrder = async () => {
+        try {
+            const items = cartItems.map(({ _id, quantity }) => ({
+                productId: _id,
+                quantity,
+            }));
+
+            const totalPrice = cartItems.reduce(
+                (total, item) => total + item.price * item.quantity,
+                0
+            ).toFixed(2);
+
+            const orderPayload = {
+                items,
+                totalPrice: parseFloat(totalPrice),
+                status: "Pending",
+            };
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_API_URL}/api/orders`,
+                orderPayload
+            );
+
+            if (response.status === 201) {
+                // Clear the cart
+                localStorage.removeItem("cart");
+                setCartItems([]);
+
+                // Navigate to "My Orders" page
+                navigate("/my-orders");
+            } else {
+                console.error("Unexpected response:", response);
+            }
+        } catch (error) {
+            console.error("Error placing order:", error);
+        }
+    };
+
+
 
     // Fetch cart items if user is authenticated
     useEffect(() => {
@@ -103,7 +147,12 @@ const CartPage = () => {
 
             <div className="mt-6 flex justify-between items-center">
                 <h2 className="text-2xl font-semibold text-gray-800">Total: ${getTotalAmount()}</h2>
-                <button className="btn btn-primary text-white hover:bg-blue-600">Proceed to Checkout</button>
+                <button
+                    onClick={handlePlaceOrder}
+                    className="btn btn-primary text-white hover:bg-blue-600"
+                >
+                    Place Order
+                </button>
             </div>
         </div>
     );
